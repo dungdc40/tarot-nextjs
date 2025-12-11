@@ -1,0 +1,363 @@
+/* Google Fonts - Elegant typography for mystical theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Accessible Neumorphism color palette - Soothing Blue Pastels */
+  --color-background: #EDF2F7;
+  --color-foreground: #2D3748;
+  --color-primary: #7C9EB2;
+  --color-primary-dark: #6A8CA0;
+  --color-primary-light: #8FAFC4;
+  --color-primary-muted: #A4C2D4;
+  --color-secondary: #B8A9C9;
+  --color-secondary-dark: #A594B7;
+  --color-secondary-light: #CABDDB;
+  --color-muted: #E2E8F0;
+  --color-muted-foreground: #718096;
+  --color-card: #F0F4F8;
+  --color-card-foreground: #2D3748;
+  --color-border: #CBD5E0;
+  --color-accent: #7C9EB2;
+  --color-accent-muted: #8FAFC4;
+  --color-error: #F56565;
+  --color-error-light: #FC8181;
+  --color-success: #48BB78;
+  --color-warning: #ED8936;
+  --color-focus: #7C9EB2;
+
+  /* Neumorphic surface colors */
+  --color-surface: #EDF2F7;
+  --color-surface-raised: #F0F4F8;
+  --color-surface-sunken: #E2E8F0;
+  --color-surface-overlay: #F7FAFC;
+
+  /* Font families */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Border radius - Matching reference site */
+  --radius-neu: 16px;
+  --radius-neu-lg: 24px;
+  --radius-neu-xl: 32px;
+
+  /* Neumorphic shadows - Matching reference site */
+  --shadow-neu-flat: 0 1px 2px rgba(163, 177, 198, 0.1);
+  --shadow-neu-raised: -8px -8px 20px rgba(255, 255, 255, 0.8), 8px 8px 20px rgba(163, 177, 198, 0.5);
+  --shadow-neu-raised-sm: -4px -4px 10px rgba(255, 255, 255, 0.7), 4px 4px 10px rgba(163, 177, 198, 0.4);
+  --shadow-neu-raised-lg: -12px -12px 28px rgba(255, 255, 255, 0.9), 12px 12px 28px rgba(163, 177, 198, 0.6);
+  --shadow-neu-inset: inset 4px 4px 10px rgba(163, 177, 198, 0.3), inset -4px -4px 10px rgba(255, 255, 255, 0.7);
+  --shadow-neu-inset-sm: inset 3px 3px 6px rgba(163, 177, 198, 0.25), inset -3px -3px 6px rgba(255, 255, 255, 0.6);
+  --shadow-neu-btn: -4px -4px 10px rgba(255, 255, 255, 0.5), 4px 4px 10px rgba(163, 177, 198, 0.4);
+  --shadow-neu-btn-pressed: inset 3px 3px 8px rgba(163, 177, 198, 0.3), inset -3px -3px 8px rgba(255, 255, 255, 0.6);
+  --shadow-neu-card: -8px -8px 20px rgba(255, 255, 255, 0.8), 8px 8px 20px rgba(163, 177, 198, 0.5);
+  --shadow-neu-card-hover: -10px -10px 24px rgba(255, 255, 255, 0.85), 10px 10px 24px rgba(163, 177, 198, 0.55);
+  --shadow-focus-ring: 0 0 0 3px rgba(66, 153, 225, 0.4);
+
+  /* Transition timing */
+  --ease-neu: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Animation keyframes */
+  --animate-fade-in: fade-in 300ms ease-out;
+  --animate-slide-up: slide-up 300ms ease-out;
+  --animate-pulse-slow: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    background: linear-gradient(135deg, #EDF2F7 0%, #F7FAFC 50%, #EDF2F7 100%);
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Accessible focus states - visible for keyboard navigation */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Headings with serif font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-foreground);
+  }
+
+  /* Links - accessible and neumorphic */
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 200ms ease;
+  }
+
+  a:hover {
+    color: var(--color-primary-dark);
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    color: var(--color-foreground);
+  }
+}
+
+@layer components {
+  /* Neumorphic Button - Base */
+  .neu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 14px 28px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-surface-raised);
+    border-radius: var(--radius-neu);
+    box-shadow: var(--shadow-neu-btn);
+    transition: all 250ms var(--ease-neu);
+    cursor: pointer;
+    border: none;
+  }
+
+  .neu-btn:hover {
+    box-shadow: var(--shadow-neu-card);
+    transform: translateY(-1px);
+  }
+
+  .neu-btn:active {
+    box-shadow: var(--shadow-neu-btn-pressed);
+    transform: scale(0.98);
+  }
+
+  .neu-btn:focus-visible {
+    box-shadow: var(--shadow-focus-ring);
+    outline: none;
+  }
+
+  /* Neumorphic Button - Primary Filled */
+  .neu-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 14px 28px;
+    font-weight: 500;
+    color: white;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    border-radius: var(--radius-neu);
+    box-shadow: -6px -6px 12px rgba(255, 255, 255, 0.5), 6px 6px 12px rgba(163, 177, 198, 0.5);
+    transition: all 250ms var(--ease-neu);
+    cursor: pointer;
+    border: none;
+  }
+
+  .neu-btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary-muted) 100%);
+    box-shadow: -8px -8px 16px rgba(255, 255, 255, 0.6), 8px 8px 16px rgba(163, 177, 198, 0.6);
+    transform: translateY(-1px);
+  }
+
+  .neu-btn-primary:active {
+    box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.4), inset -2px -2px 4px rgba(255, 255, 255, 0.3);
+    transform: scale(0.98);
+  }
+
+  .neu-btn-primary:focus-visible {
+    box-shadow: var(--shadow-focus-ring);
+    outline: none;
+  }
+
+  /* Neumorphic Button - Secondary */
+  .neu-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    color: white;
+    background-color: var(--color-secondary);
+    border-radius: var(--radius-neu);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.12), -2px -2px 6px rgba(255, 255, 255, 0.25);
+    transition: all 200ms var(--ease-neu);
+    cursor: pointer;
+    border: none;
+  }
+
+  /* Neumorphic Card */
+  .neu-card {
+    background: var(--color-card);
+    border-radius: var(--radius-neu-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-neu-card);
+    transition: all 250ms var(--ease-neu);
+  }
+
+  .neu-card:hover {
+    box-shadow: var(--shadow-neu-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .neu-card-interactive {
+    background: var(--color-card);
+    border-radius: var(--radius-neu-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-neu-card);
+    transition: all 250ms var(--ease-neu);
+    cursor: pointer;
+  }
+
+  .neu-card-interactive:hover {
+    box-shadow: var(--shadow-neu-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .neu-card-interactive:active {
+    box-shadow: var(--shadow-neu-inset);
+    transform: translateY(0);
+  }
+
+  /* Neumorphic Inset (for inputs, wells) */
+  .neu-inset {
+    background-color: var(--color-surface-sunken);
+    border-radius: var(--radius-neu);
+    box-shadow: var(--shadow-neu-inset);
+    transition: box-shadow 200ms var(--ease-neu);
+  }
+
+  /* Neumorphic Input */
+  .neu-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-surface-sunken);
+    color: var(--color-foreground);
+    border-radius: var(--radius-neu);
+    box-shadow: var(--shadow-neu-inset-sm);
+    border: none;
+    transition: all 200ms var(--ease-neu);
+  }
+
+  .neu-input::placeholder {
+    color: var(--color-muted-foreground);
+  }
+
+  .neu-input:focus {
+    box-shadow: var(--shadow-focus-ring);
+    outline: none;
+    background-color: var(--color-surface-raised);
+  }
+
+  /* Neumorphic Badge/Pill */
+  .neu-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: var(--color-surface-raised);
+    border-radius: 9999px;
+    box-shadow: var(--shadow-neu-raised-sm);
+  }
+
+  /* Neumorphic Divider */
+  .neu-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-border), transparent);
+  }
+
+  /* Skip to content link for accessibility */
+  .skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 50;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-primary);
+    color: white;
+    border-radius: 0 0 var(--radius-neu) var(--radius-neu);
+    transition: top 200ms ease;
+  }
+
+  .skip-to-content:focus {
+    top: 0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Neumorphic text shadows for headings */
+  .text-shadow-neu {
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8), -1px -1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Gradient text utility - matches reference site */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Screen reader only utility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

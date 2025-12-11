@@ -1,0 +1,66 @@
+Intent assessment:
+{
+  "intentStatus": "clear",
+  "assistantMessage": "Clear — you want a 2-card Tarot reading about how your Tarot project will go over the next 6 months. Shall I proceed with a general reading, or do you want me to focus on a specific aspect (e.g., growth, obstacles, resources)?",
+  "intentSummary": "Provide a two-card Tarot reading about the user's Tarot project and its development over the next six months.",
+  "topic": "Tarot project next 6 months",
+  "timeframe": "next 6 months",
+  "confidence": 0.95
+}
+
+Generate spread:
+{
+  "spreadType": "Project Development Duo",
+  "spreadDescription": "Two-card spread to assess the current trajectory of your Tarot project and the most likely outcome/development over the next six months, with concise guidance on how to support its growth.",
+  "reasoning": "A two-card layout is ideal here: one card captures the project's present energy and driving factors, while the second shows the likely outcome and practical guidance for the coming six months. This keeps the reading focused and actionable without unnecessary detail.",
+  "positions": [
+    {
+      "key": "currentTrajectory",
+      "label": "Current Energy & Trajectory",
+      "promptRole": "Describe the present state of the project: main strengths, driving forces, immediate opportunities or vulnerabilities, and what is pushing the project forward right now."
+    },
+    {
+      "key": "sixMonthOutcome",
+      "label": "Outcome & Guidance for Next Six Months",
+      "promptRole": "Describe the most likely development over the next six months, including key influences or obstacles, practical steps to support positive growth, and warning signs to watch for."
+    }
+  ]
+}
+
+Generate reading:
+{
+  "cards": [
+    {
+      "cardId": "RW-KING-PENTACLES",
+      "name": "King of Pentacles",
+      "interpretation": "The project currently sits on a solid, well-managed foundation: practical competence, reliable resources, and steady leadership are its main strengths. What’s pushing it forward is discipline, clear budgeting, and strong relationships with stakeholders or supporters that provide stability and credibility. Immediate opportunities include scaling responsibly and securing further investment, while vulnerabilities include a tendency toward conservatism or resistance to risky innovation that could slow adaptation."
+    },
+    {
+      "cardId": "RW-KNIGHT-SWORDS",
+      "name": "Knight of Swords",
+      "interpretation": "Over the next six months the project is likely to move quickly and assertively, propelled by decisive actions, new initiatives, or an aggressive outreach push. Key influences will be momentum, clear objectives, and a willingness to cut through obstacles, but obstacles may include haste, overlooked details, or friction from pushing too fast. Practical steps to support positive growth are to channel that energy into focused campaigns, set checkpoints to catch errors early, and manage communications to avoid unnecessary conflict; watch for signs of burnout, scope creep, or shortcuts that compromise quality."
+    }
+  ],
+  "synthesis": "Together the cards show a complementary but potentially tense dynamic: the King of Pentacles supplies the steady resources, governance, and credibility, while the Knight of Swords brings fast-moving ambition and the will to push the project forward quickly. The likely trajectory is a period of rapid progress built on an otherwise stable base — a good recipe for meaningful development if managed carefully. The main challenge will be balancing speed with the King’s standards: use the project’s reliable structure to channel the Knight’s momentum without sacrificing quality, relationships, or long-term viability.",
+  "advice": "Honor the King’s systems while letting the Knight act: set clear, short-term milestones and review gates so fast moves are vetted before they scale. Communicate expectations and delegate authority to trusted people to keep momentum sustainable, and pause when you notice rushing, overlooked details, or team friction."
+}
+
+Clarification:
+{
+  "synthesis": "",
+  "isFinalAnswer": false,
+  "cards": [
+    {
+      "cardId": "RQ-01-TIMING",
+      "name": "",
+      "promptRole": "Focus on timing and endurance: indicate how long she can realistically endure the current full-time role, when a first freelance client or job is likely to appear if she leaves, whether more work will follow, and her financial outlook through Tết (Vietnamese New Year). Give answers in concrete timeframes (weeks/months) and note conditions that change timing.",
+      "interpretation": "",
+      "label": "Timing & Endurance — draw 1 card",
+      "reversed": false
+    }
+  ]
+}
+
+
+Explanation:
+Core Fool symbolism: upright, the Fool embodies curiosity, openness to experience, and a willingness to leap into the unknown (the little bundle, the white rose, the dog/companion, the cliff edge). Those images point to spontaneity and a beginner’s trust.
