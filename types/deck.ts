@@ -67,7 +67,10 @@ export function filterCardsByCategory(cardIds: string[], category: CardCategory)
   return cardIds.filter((cardId) => {
     switch (category) {
       case 'majorArcana':
-        return cardId.startsWith('RW-0') || cardId.startsWith('RW-1') || cardId.startsWith('RW-2')
+        return !cardId.includes('WANDS') &&
+               !cardId.includes('CUPS') &&
+               !cardId.includes('SWORDS') &&
+               !cardId.includes('PENTACLES')
       case 'wands':
         return cardId.includes('WANDS')
       case 'cups':

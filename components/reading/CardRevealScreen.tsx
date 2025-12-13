@@ -43,19 +43,19 @@ export function CardRevealScreen({
   const isLastCard = positionIndex === totalPositions - 1
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen justify-center p-4 pt-8 lg:pt-12">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="flex flex-col items-center gap-8"
+        className="flex flex-col items-center gap-6 lg:gap-8"
       >
         {/* Progress indicator */}
         <div className="text-center">
           <p className="text-sm text-foreground/60">
             Card {positionIndex + 1} of {totalPositions}
           </p>
-          <h2 className="mt-2 text-2xl font-bold text-primary">
+          <h2 className="mt-2 text-lg lg:text-2xl font-bold text-primary">
             {positionLabel}
           </h2>
         </div>
@@ -76,7 +76,7 @@ export function CardRevealScreen({
                 transform: 'rotateY(0deg)',
               }}
             >
-              <div className="relative h-[454px] w-[272px] overflow-hidden rounded-lg border-2 border-primary/30 shadow-xl">
+              <div className="relative h-[340px] w-[204px] md:h-[454px] md:w-[272px] overflow-hidden rounded-lg border-2 border-primary/30 shadow-xl">
                 <Image
                   src={getCardBackImagePath()}
                   alt="Card back"
@@ -95,7 +95,7 @@ export function CardRevealScreen({
                 transform: 'rotateY(180deg)',
               }}
             >
-              <div className="relative h-[454px] w-[272px] overflow-hidden rounded-lg border-2 border-primary/50 shadow-2xl">
+              <div className="relative h-[340px] w-[204px] lg:h-[454px] lg:w-[272px] overflow-hidden rounded-lg border-2 border-primary/50 shadow-2xl">
                 <Image
                   src={getCardImagePath(cardId)}
                   alt={cardName}
@@ -119,7 +119,7 @@ export function CardRevealScreen({
             transition={{ delay: 0.5, duration: 0.4 }}
             className="text-center"
           >
-            <h3 className="text-2xl font-bold text-foreground">{cardName}</h3>
+            <h3 className="text-lg lg:text-2xl font-bold text-foreground">{cardName}</h3>
             <p className="mt-1 text-sm text-foreground/60">
               {reversed ? 'Reversed' : 'Upright'}
             </p>

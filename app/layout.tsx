@@ -21,6 +21,11 @@ export const metadata: Metadata = {
     'Experience personalized tarot readings with AI-powered interpretations. Explore the mystical wisdom of the Rider-Waite tarot deck.',
   keywords: ['tarot', 'tarot reading', 'AI tarot', 'divination', 'spirituality'],
   authors: [{ name: 'Tarot App' }],
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
+  },
   openGraph: {
     title: 'Tarot Reading - AI-Powered Mystical Guidance',
     description:

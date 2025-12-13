@@ -134,7 +134,7 @@ export function SelectableText({
     <div ref={containerRef} className={`relative ${className}`}>
       {/* Selectable text */}
       <p
-        className="select-text leading-relaxed"
+        className="text-sm lg:text-base select-text leading-relaxed"
         onMouseUp={handleMouseUp}
         onTouchEnd={handleMouseUp}
       >

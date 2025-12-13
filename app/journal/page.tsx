@@ -220,7 +220,7 @@ export default function JournalPage() {
                               e.preventDefault()
                               setShowDeleteConfirm(entry.id)
                             }}
-                            className="rounded-neu bg-surface p-2 text-muted-foreground shadow-neu-raised-sm opacity-0 transition-all duration-200 hover:text-error hover:shadow-neu-inset-sm group-hover:opacity-100 focus:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                            className="rounded-neu bg-surface p-2 text-muted-foreground shadow-neu-raised-sm transition-all duration-200 hover:text-error hover:shadow-neu-inset-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
                             aria-label={`Delete entry: ${entry.topic || entry.intention}`}
                           >
                             <Trash2 className="h-4 w-4" aria-hidden="true" />

@@ -27,9 +27,24 @@ export function CardPicker({
   const [scrollLeft, setScrollLeft] = useState(0)
   const [hasDragged, setHasDragged] = useState(false)
   const [sliderValue, setSliderValue] = useState(50)
+  const [isMobile, setIsMobile] = useState(false)
 
   // Total cards in deck (not hardcoded)
   const totalCards = shuffledDeck.length
+
+  // Card dimensions
+  const cardWidth = isMobile ? 120 : 160
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Auto-scroll to center on mount
   useEffect(() => {
@@ -39,7 +54,7 @@ export function CardPicker({
       container.scrollLeft = scrollPosition
       setSliderValue(50) // Start at center
     }
-  }, [])
+  }, [cardWidth])
 
   // Update slider when user scrolls manually
   useEffect(() => {
@@ -167,13 +182,13 @@ export function CardPicker({
 
   return (
     <div
-      className="flex min-h-screen flex-col items-center justify-center bg-background p-4"
+      className="flex min-h-screen flex-col items-center bg-background p-4 overflow-y-auto"
       role="region"
       aria-label="Card selection interface"
     >
-      <div className="w-full max-w-6xl">
+      <div className="w-full max-w-6xl py-4">
         {/* Header */}
-        <div className="mb-8 text-center">
+        <div className="mb-4 lg:mb-8 text-center">
           <h2 className="mb-2 font-serif text-2xl font-bold text-foreground md:text-3xl">
             Choose Your Card
           </h2>
@@ -193,11 +208,11 @@ export function CardPicker({
         </div>
 
         {/* Horizontal Scrollable Card Carousel */}
-        <div className="relative mb-8" role="listbox" aria-label="Tarot cards to choose from">
+        <div className="relative mb-2 lg:mb-8" role="listbox" aria-label="Tarot cards to choose from">
           {/* Scroll Container */}
           <div
             ref={scrollContainerRef}
-            className="hide-scrollbar overflow-x-auto pb-16 cursor-grab active:cursor-grabbing"
+            className="hide-scrollbar overflow-x-auto pb-12 lg:pb-16 cursor-grab active:cursor-grabbing"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -229,8 +244,8 @@ export function CardPicker({
                     aria-label={`Card ${index + 1}${isSelected ? ', selected' : ''}`}
                     className="relative flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 group"
                     style={{
-                      width: '160px',
-                      marginLeft: index === 0 ? '0' : `${-160 * overlap}px`,
+                      width: `${cardWidth}px`,
+                      marginLeft: index === 0 ? '0' : `${-cardWidth * overlap}px`,
                       zIndex: isSelected ? 100 : totalCards - index,
                     }}
                   >
@@ -247,7 +262,7 @@ export function CardPicker({
                     >
                       {/* Card Image */}
                       <div
-                        className={`relative h-[280px] w-40 rounded-neu-lg transition-all duration-200 ease-neu ${
+                        className={`relative h-[210px] w-[120px] md:h-[280px] md:w-40 rounded-neu-lg transition-all duration-200 ease-neu ${
                           isSelected
                             ? ''
                             : 'opacity-90 hover:opacity-100'
@@ -258,7 +273,7 @@ export function CardPicker({
                           alt=""
                           fill
                           className="object-cover rounded-neu-lg pointer-events-none"
-                          sizes="160px"
+                          sizes="(max-width: 768px) 120px, 160px"
                           draggable={false}
                           aria-hidden="true"
                         />
@@ -266,8 +281,8 @@ export function CardPicker({
                         {/* Selected Indicator */}
                         {isSelected && (
                           <div className="absolute inset-0 flex items-center justify-center rounded-neu-lg">
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-                              <Check className="h-8 w-8 text-white" aria-hidden="true" />
+                            <div className="flex h-12 w-12 md:h-16 md:w-16 items-center justify-center rounded-full bg-primary">
+                              <Check className="h-6 w-6 md:h-8 md:w-8 text-white" aria-hidden="true" />
                             </div>
                           </div>
                         )}
@@ -326,23 +341,20 @@ export function CardPicker({
         </div>
 
         {/* Instructions */}
-        <div className="mb-8 text-center">
+        <div className="mb-4 lg:mb-8 text-center">
           <p className="text-sm text-muted-foreground">
             Scroll through the deck and click on a card to select it
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Use arrow keys to navigate when focused
           </p>
         </div>
 
         {/* Selection Confirmation - Neumorphic */}
         <div
-          className={`mb-8 text-center transition-all duration-300 ${
+          className={`mb-4 lg:mb-8 text-center transition-all duration-300 ${
             selectedIndex !== null ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           aria-live="polite"
         >
-          <p className="mb-4 text-muted-foreground">
+          <p className="mb-4 text-muted-foreground text-sm lg:text-base">
             Card {selectedIndex !== null ? selectedIndex + 1 : ''} selected
             <span className="sr-only">
               {selectedIndex !== null ? `. ${totalCards - positionIndex - 1} cards will remain after this pick` : ''}
@@ -352,19 +364,19 @@ export function CardPicker({
             onClick={handleConfirm}
             disabled={selectedIndex === null}
             aria-label={selectedIndex !== null ? `Confirm selection of card ${selectedIndex + 1}` : 'Select a card first'}
-            className="neu-btn-primary rounded-neu-lg px-8 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="neu-btn-primary rounded-neu-lg px-8 py-3 text-base lg:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Confirm Selection
           </button>
         </div>
 
         {/* Progress Indicator - Neumorphic */}
-        <div className="mt-8" role="progressbar" aria-valuenow={positionIndex + 1} aria-valuemin={1} aria-valuemax={totalPositions} aria-label="Card selection progress">
+        <div className="lg:mt-8" role="progressbar" aria-valuenow={positionIndex + 1} aria-valuemin={1} aria-valuemax={totalPositions} aria-label="Card selection progress">
           <div className="flex justify-center gap-2">
             {Array.from({ length: totalPositions }, (_, i) => (
               <div
                 key={i}
-                className={`h-2.5 w-10 rounded-full transition-all duration-200 ${
+                className={`h-2 w-8 lg:h-2.5 lg:w-10 rounded-full transition-all duration-200 ${
                   i < positionIndex
                     ? 'bg-primary shadow-neu-raised-sm'
                     : i === positionIndex

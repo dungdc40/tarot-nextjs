@@ -100,29 +100,29 @@ export function CardDetailDialog({ card, isOpen, onClose, responseId, onWhyReque
                   {/* Position Insight */}
                   {card.promptRole && (
                     <div>
-                      <h3 className="mb-2 text-base font-bold text-foreground">
+                      <h3 className="mb-2 text-sm lg:text-base font-bold text-foreground">
                         Position Insight
                       </h3>
-                      <p className="leading-relaxed text-foreground/80">{card.promptRole}</p>
+                      <p className="text-sm lg:text-base leading-relaxed text-foreground/80">{card.promptRole}</p>
                     </div>
                   )}
 
                   {/* Card Description */}
                   {cardData?.description && (
                     <div>
-                      <h3 className="mb-2 text-base font-bold text-foreground">Card Description</h3>
-                      <p className="leading-relaxed text-foreground/80">{cardData.description}</p>
+                      <h3 className="mb-2 text-sm lg:text-base font-bold text-foreground">Card Description</h3>
+                      <p className="text-sm lg:text-base leading-relaxed text-foreground/80">{cardData.description}</p>
                     </div>
                   )}
 
                   {/* Reading Interpretation */}
                   {card.interpretation && (
                     <div>
-                      <h3 className="mb-2 text-base font-bold text-foreground">Interpretation</h3>
+                      <h3 className="mb-2 text-sm lg:text-base font-bold text-foreground">Interpretation</h3>
                       <SelectableText
                         text={card.interpretation}
                         responseId={responseId}
-                        className="text-foreground/80"
+                        className="text-sm lg:text-base text-foreground/80"
                         onWhyRequest={onWhyRequest}
                       />
                     </div>
@@ -131,7 +131,7 @@ export function CardDetailDialog({ card, isOpen, onClose, responseId, onWhyReque
                   {/* Keywords */}
                   {cardData?.keywords && (
                     <div>
-                      <h3 className="mb-2 text-base font-bold text-foreground">
+                      <h3 className="mb-2 text-sm lg:text-base font-bold text-foreground">
                         {card.reversed ? 'Keywords (Reversed)' : 'Keywords (Upright)'}
                       </h3>
                       <div className="flex flex-wrap gap-2">
@@ -141,7 +141,7 @@ export function CardDetailDialog({ card, isOpen, onClose, responseId, onWhyReque
                         ).map((keyword) => (
                           <span
                             key={keyword}
-                            className="rounded-full bg-primary/20 px-3 py-1 text-sm font-medium text-primary"
+                            className="rounded-full bg-primary/20 px-3 py-1 text-xs lg:text-sm font-medium text-primary"
                           >
                             {keyword}
                           </span>

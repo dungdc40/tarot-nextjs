@@ -16,7 +16,7 @@ import { CardRevealScreen } from '@/components/reading/CardRevealScreen'
 import { ReadingDisplay } from '@/components/reading/ReadingDisplay'
 import { riderWaiteDeckService } from '@/lib/services/RiderWaiteDeckService'
 import { aiService } from '@/lib/services/AIService'
-import type { ChatMessage, ReadingMainData, ExplanationMessageData } from '@/types'
+import type { ChatMessage, ReadingMainData, ExplanationMessageData, SpreadSelection } from '@/types'
 import { isReadingMainData } from '@/types'
 
 export default function ReadingPage() {
@@ -41,14 +41,6 @@ export default function ReadingPage() {
     return false
   }, [showToast])
 
-  // Prevent body scrolling on this page
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [])
-
   const {
     state,
     session,
@@ -72,6 +64,22 @@ export default function ReadingPage() {
     reset,
   } = useReadingStore()
 
+  // Conditionally prevent body scrolling for chat screens only
+  useEffect(() => {
+    // Only apply overflow hidden for chat screens (intentCollecting, followUps)
+    const isChatScreen = state.type === 'intentCollecting' || state.type === 'followUps'
+
+    if (isChatScreen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [state.type])
+
   // Initialize deck and start reading flow
   useEffect(() => {
     const initializeReading = async () => {
@@ -80,7 +88,7 @@ export default function ReadingPage() {
           // Load deck first
           await riderWaiteDeckService.loadDeck()
 
-          // Start with intention collecting (chat screen)
+          // Start normal reading flow
           startReading()
         } catch (err) {
           console.error('Failed to load deck:', err)
@@ -90,7 +98,7 @@ export default function ReadingPage() {
     }
 
     initializeReading()
-  }, [state.type, startReading, setState, setSpread, setShuffledDeck, setError])
+  }, [state.type, startReading, setError])
 
   // Reset save button when new message is added
   useEffect(() => {
@@ -675,33 +683,33 @@ export default function ReadingPage() {
 
       case 'intentCollecting':
         return (
-          <div className="mx-auto h-screen max-w-4xl overflow-hidden">
-            <div className="flex h-full flex-col">
-              <div className="flex-shrink-0 bg-surface-raised border-b border-primary/20 p-4 shadow-neu-raised">
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={handleBack}
-                    className="rounded-neu bg-surface p-2.5 text-muted-foreground shadow-neu-raised-sm transition-all duration-200 hover:shadow-neu-inset-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-                    aria-label="Back to home"
-                  >
-                    <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                  <div>
-                    <h1 className="font-serif text-xl font-bold text-foreground">New Reading</h1>
-                    <p className="text-sm text-muted-foreground">
-                      Tell me what's on your mind...
-                    </p>
-                  </div>
+          <div className="fixed inset-0 flex flex-col">
+            {/* Fixed Header */}
+            <div className="fixed top-0 left-0 right-0 z-10 bg-surface-raised border-b border-primary/20 p-4 shadow-neu-raised safe-area-top">
+              <div className="mx-auto max-w-4xl flex items-center gap-4">
+                <button
+                  onClick={handleBack}
+                  className="rounded-neu bg-surface p-2.5 text-muted-foreground shadow-neu-raised-sm transition-all duration-200 hover:shadow-neu-inset-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                  aria-label="Back to home"
+                >
+                  <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+                </button>
+                <div>
+                  <h1 className="font-serif text-xl font-bold text-foreground">New Reading</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Tell me what's on your mind...
+                  </p>
                 </div>
               </div>
-              <div className="flex-1 min-h-0">
-                <ChatInterface
-                  messages={session?.messages || []}
-                  onSendMessage={handleIntentMessage}
-                  isLoading={isLoading}
-                  placeholder="What guidance do you seek?"
-                />
-              </div>
+            </div>
+            {/* Chat Interface - positioned absolutely to avoid keyboard resize */}
+            <div className="absolute inset-0 pt-[88px]">
+              <ChatInterface
+                messages={session?.messages || []}
+                onSendMessage={handleIntentMessage}
+                isLoading={isLoading}
+                placeholder="What guidance do you seek?"
+              />
             </div>
           </div>
         )
@@ -756,63 +764,63 @@ export default function ReadingPage() {
 
       case 'followUps':
         return (
-          <div className="mx-auto h-screen max-w-4xl overflow-hidden">
-            <div className="flex h-full flex-col">
-              <div className="flex-shrink-0 bg-surface-raised border-b border-primary/20 p-4 shadow-neu-raised">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={handleBack}
-                      className="rounded-neu bg-surface p-2.5 text-muted-foreground shadow-neu-raised-sm transition-all duration-200 hover:shadow-neu-inset-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-                      aria-label="Back to home"
-                    >
-                      <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                    <div>
-                      <h1 className="font-serif text-xl font-bold text-foreground">Your Reading</h1>
-                      <p className="text-sm text-muted-foreground line-clamp-1">
-                        {session?.intention || 'Tarot Reading'}
-                      </p>
-                    </div>
-                  </div>
+          <div className="fixed inset-0 flex flex-col">
+            {/* Fixed Header */}
+            <div className="fixed top-0 left-0 right-0 z-10 bg-surface-raised border-b border-primary/20 p-4 shadow-neu-raised safe-area-top">
+              <div className="mx-auto max-w-4xl flex items-center justify-between">
+                <div className="flex items-center gap-4">
                   <button
-                    onClick={handleSaveReading}
-                    disabled={isSaving || isSaved}
-                    className={`flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
-                      isSaved
-                        ? 'bg-green-500/20 text-green-400 cursor-default'
-                        : 'bg-primary text-white hover:bg-primary/90 disabled:opacity-50'
-                    }`}
+                    onClick={handleBack}
+                    className="rounded-neu bg-surface p-2.5 text-muted-foreground shadow-neu-raised-sm transition-all duration-200 hover:shadow-neu-inset-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                    aria-label="Back to home"
                   >
-                    {isSaved ? (
-                      <>
-                        <Check className="h-4 w-4" />
-                        Saved
-                      </>
-                    ) : isSaving ? (
-                      <>
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4" />
-                        Save
-                      </>
-                    )}
+                    <ArrowLeft className="h-5 w-5" aria-hidden="true" />
                   </button>
+                  <div>
+                    <h1 className="font-serif text-xl font-bold text-foreground">Your Reading</h1>
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {session?.intention || 'Tarot Reading'}
+                    </p>
+                  </div>
                 </div>
+                <button
+                  onClick={handleSaveReading}
+                  disabled={isSaving || isSaved}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
+                    isSaved
+                      ? 'bg-green-500/20 text-green-400 cursor-default'
+                      : 'bg-primary text-white hover:bg-primary/90 disabled:opacity-50'
+                  }`}
+                >
+                  {isSaved ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Saved
+                    </>
+                  ) : isSaving ? (
+                    <>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      Save
+                    </>
+                  )}
+                </button>
               </div>
-              <div className="flex-1 min-h-0">
-                <ChatInterface
-                  messages={session?.messages || []}
-                  onSendMessage={handleClarificationMessage}
-                  isLoading={isLoading}
-                  placeholder="Ask a follow-up question..."
-                  showAllMessageTypes={true}
-                  onWhyRequest={handleWhyRequest}
-                />
-              </div>
+            </div>
+            {/* Chat Interface - positioned absolutely to avoid keyboard resize */}
+            <div className="absolute inset-0 pt-[88px]">
+              <ChatInterface
+                messages={session?.messages || []}
+                onSendMessage={handleClarificationMessage}
+                isLoading={isLoading}
+                placeholder="Ask a follow-up question..."
+                showAllMessageTypes={true}
+                onWhyRequest={handleWhyRequest}
+              />
             </div>
           </div>
         )
@@ -859,5 +867,9 @@ export default function ReadingPage() {
     }
   }
 
-  return <div className="h-screen overflow-hidden">{renderContent()}</div>
+  // Apply different wrapper styles for chat screens vs other screens
+  const isChatScreen = state.type === 'intentCollecting' || state.type === 'followUps'
+  const wrapperClassName = isChatScreen ? 'h-screen overflow-hidden' : 'min-h-screen'
+
+  return <div className={wrapperClassName}>{renderContent()}</div>
 }

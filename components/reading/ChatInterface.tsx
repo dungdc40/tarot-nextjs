@@ -50,7 +50,7 @@ export function ChatInterface({
   }
 
   return (
-    <div className="flex h-full flex-col" role="region" aria-label="Chat interface">
+    <div className="flex h-full flex-col relative" role="region" aria-label="Chat interface">
       {/* Messages Area */}
       <div
         ref={messagesContainerRef}
@@ -58,7 +58,9 @@ export function ChatInterface({
         role="log"
         aria-live="polite"
         aria-label="Chat messages"
+        style={{ paddingBottom: '120px' }}
       >
+        <div className="max-w-4xl mx-auto space-y-4">
         {messages.map((message, index) => {
           // Render ReadingMainData messages (multiple cards)
           if (isReadingMainData(message.data) && showAllMessageTypes) {
@@ -133,7 +135,7 @@ export function ChatInterface({
                 }`}
                 aria-label={message.isUser ? 'Your message' : 'Assistant message'}
               >
-                <p className="whitespace-pre-wrap leading-relaxed">{message.data}</p>
+                <p className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base">{message.data}</p>
                 <p className="mt-1.5 text-xs opacity-70">
                   <time dateTime={message.timestamp.toISOString()}>
                     {message.timestamp.toLocaleTimeString([], {
@@ -166,11 +168,12 @@ export function ChatInterface({
             </div>
           </div>
         )}
+        </div>
       </div>
 
-      {/* Input Area - Neumorphic */}
-      <div className="flex-shrink-0 bg-surface-raised p-4 shadow-neu-raised">
-        <form onSubmit={handleSubmit} className="flex gap-3">
+      {/* Input Area - Neumorphic - Fixed for Safari mobile */}
+      <div className="fixed bottom-0 left-0 right-0 bg-surface-raised p-4 shadow-neu-raised safe-area-bottom">
+        <form onSubmit={handleSubmit} className="flex gap-3 max-w-4xl mx-auto">
           <label htmlFor="chat-input" className="sr-only">
             Type your message
           </label>
