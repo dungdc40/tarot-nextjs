@@ -145,9 +145,11 @@ export class RiderWaiteDeckService extends DeckService {
    */
   private compareMajorArcana(a: string, b: string): number {
     // Extract number from card ID (e.g., "RW-00-FOOL" → 0)
-    const numA = parseInt(a.split('-')[1], 10) || 999
-    const numB = parseInt(b.split('-')[1], 10) || 999
-    return numA - numB
+    const numA = parseInt(a.split('-')[1], 10)
+    const numB = parseInt(b.split('-')[1], 10)
+    const orderA = isNaN(numA) ? 999 : numA
+    const orderB = isNaN(numB) ? 999 : numB
+    return orderA - orderB
   }
 
   /**

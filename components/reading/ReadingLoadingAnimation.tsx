@@ -56,15 +56,15 @@ export function ReadingLoadingAnimation({
   }, [duration, onComplete])
 
   return (
-    <div className="flex min-h-screen items-center justify-center overflow-hidden bg-background">
+    <div className="flex pt-8 lg:pt-12 min-h-screen justify-center overflow-hidden bg-background p-4">
       {/* Container for video and text */}
-      <div className="flex flex-col items-center">
-        {/* Video Container - Fullscreen on mobile, centered box on tablet+ */}
-        <div className="relative h-screen w-full md:h-auto md:w-[300px] md:rounded-2xl md:overflow-hidden md:shadow-2xl">
+      <div className="flex flex-col items-center gap-6">
+        {/* Video Container - Fixed height on mobile to ensure text is visible */}
+        <div className="relative h-[500px] w-full max-w-[300px] overflow-hidden rounded-2xl md:h-[600px] md:max-w-[380px]">
           {/* Video Background */}
           <video
             ref={videoRef}
-            className="h-full w-full object-cover md:object-contain"
+            className="h-full w-full object-contain"
             autoPlay
             loop
             muted
@@ -88,7 +88,7 @@ export function ReadingLoadingAnimation({
 
         {/* Text below video */}
         {isVideoLoaded && (
-          <div className="mt-[15px] text-center">
+          <div className="text-center">
             <p className="text-lg font-medium text-foreground">
               Interpreting your cards...
             </p>

@@ -75,7 +75,7 @@ export function RitualInterface({ onComplete }: RitualInterfaceProps) {
   const currentSecond = Math.floor(progress / 33.33) + 1
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80 p-8">
+    <div className="flex flex-col items-center bg-gradient-to-b from-background to-background/80 p-4 lg:p-8">
       <div className="max-w-lg text-center">
         {/* Title */}
         <h2 className="mb-3 text-3xl font-bold text-foreground">
@@ -83,8 +83,8 @@ export function RitualInterface({ onComplete }: RitualInterfaceProps) {
         </h2>
 
         {/* Instructions */}
-        <p className="mb-12 px-6 text-lg text-foreground/70">
-          Before we jump into card picking. Please take a moment to center yourself. Focus on your intention and the
+        <p className="mb-6 lg:px-6 text-sm lg:text-md text-foreground/70">
+          Before jumping into card picking. Please take a moment to center yourself. Focus on your intention and the
           question you seek guidance on.
         </p>
 
@@ -100,7 +100,7 @@ export function RitualInterface({ onComplete }: RitualInterfaceProps) {
           >
             {/* Card Image Container */}
             <div
-              className={`relative h-[400px] w-[240px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 ${
+              className={`relative h-[300px] w-[180px] lg:h-[400px] lg:w-[240px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 ${
                 isHolding
                   ? 'scale-95 shadow-primary/50 ring-4 ring-primary/50'
                   : 'hover:scale-105 hover:shadow-primary/30'
@@ -153,14 +153,14 @@ export function RitualInterface({ onComplete }: RitualInterfaceProps) {
         </div>
 
         {/* Progress text */}
-        <p className="mb-4 text-base text-foreground/60">
+        <p className="mb-4 text-sm lg:text-base text-foreground/60">
           {isHolding
             ? `Hold steady... ${currentSecond}/3`
             : 'Hold the card for 3 seconds to begin'}
         </p>
 
         {/* Progress Bar */}
-        <div className="mx-auto mb-12 h-2 w-64 overflow-hidden rounded-full bg-primary/20">
+        <div className="mx-auto mb-6 h-2 w-64 overflow-hidden rounded-full bg-primary/20">
           <div
             className="h-full bg-primary transition-all duration-100"
             style={{ width: `${progress}%` }}
@@ -168,7 +168,7 @@ export function RitualInterface({ onComplete }: RitualInterfaceProps) {
         </div>
 
         {/* Breathing guide */}
-        <div className="mt-8 rounded-xl border border-primary/20 bg-background/60 p-6 backdrop-blur-sm">
+        <div className="mt-6 rounded-xl border border-primary/20 bg-background/60 p-6 backdrop-blur-sm">
           <p className="text-sm leading-relaxed text-foreground/70">
             <strong className="text-foreground">Tip:</strong> Take three deep breaths while holding.
             <br />
