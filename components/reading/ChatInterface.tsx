@@ -7,6 +7,7 @@ import { isStringMessage, isCardDraw, isReadingMainData, isExplanationMessageDat
 import { ReadingDisplay } from './ReadingDisplay'
 import { CardMessage } from './CardMessage'
 import { ExplanationReply } from './ExplanationReply'
+import { SelectableText } from './SelectableText'
 
 interface ChatInterfaceProps {
   messages: ChatMessage[]
@@ -135,7 +136,16 @@ export function ChatInterface({
                 }`}
                 aria-label={message.isUser ? 'Your message' : 'Assistant message'}
               >
-                <p className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base">{message.data}</p>
+                {onWhyRequest && !message.isUser ? (
+                  <SelectableText
+                    text={message.data}
+                    responseId={message.responseId}
+                    onWhyRequest={onWhyRequest}
+                    className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base"
+                  />
+                ) : (
+                  <p className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base">{message.data}</p>
+                )}
                 <p className="mt-1.5 text-xs opacity-70">
                   <time dateTime={message.timestamp.toISOString()}>
                     {message.timestamp.toLocaleTimeString([], {
