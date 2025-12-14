@@ -136,9 +136,12 @@ export default function ReadingPage() {
         previousResponseId: session.messages[session.messages.length - 1]?.responseId,
       })
 
+      console.log('[handleIntentMessage] Assessment response:', assessment)
+      console.log('[handleIntentMessage] hiddenConcern:', assessment.hiddenConcern)
+
       // If intent is clear, move to ritual immediately without showing AI message
       if (assessment.intentStatus === 'clear') {
-        setIntention(assessment.intentSummary || message, assessment.topic)
+        setIntention(assessment.intentSummary || message, assessment.topic, assessment.hiddenConcern)
 
         // Start generating spread in the background immediately
         // This reduces waiting time during the ritual and shuffling phases
@@ -609,10 +612,17 @@ export default function ReadingPage() {
           }
         })
 
+      console.log('[generateReading] Session data:', {
+        intention: session.intention,
+        topic: session.topic,
+        hiddenConcern: session.hiddenConcern,
+      })
+
       // Call AI service
       const readingResponse = await aiService.generateReading(
         session.intention, // intentSummary
-        selectedCardsArray
+        selectedCardsArray,
+        session.hiddenConcern // pass hiddenConcern to LLM
       )
 
       if (!readingResponse.messageData) {

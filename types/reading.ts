@@ -7,6 +7,7 @@
 export interface ChatSession {
   intention: string
   topic?: string
+  hiddenConcern?: string
   deckSeed: string
   messages: ChatMessage[]
   selectedCards: Map<number, string> // positionIndex -> cardId
@@ -70,6 +71,7 @@ export interface IntentAssessment {
   timeframe?: string
   confidence?: number
   responseId?: string
+  hiddenConcern?: string
 }
 
 export interface IntentSubmitResult {

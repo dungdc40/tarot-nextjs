@@ -102,7 +102,8 @@ export class AIService {
       reversed: boolean
       promptRole: string
       label: string
-    }>
+    }>,
+    hiddenConcern?: string
   ): Promise<ReadingResponse> {
     const cardsData = cards.map((card) => ({
       cardId: card.cardId,
@@ -120,6 +121,7 @@ export class AIService {
       body: JSON.stringify({
         intentSummary,
         cards: cardsData,
+        hiddenConcern,
       }),
     })
 

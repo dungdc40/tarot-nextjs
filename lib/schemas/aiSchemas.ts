@@ -23,6 +23,7 @@ export const GenerateReadingRequestSchema = z.object({
       label: z.string(),
     })
   ),
+  hiddenConcern: z.string().optional(),
 })
 
 export const RequestExplanationRequestSchema = z.object({

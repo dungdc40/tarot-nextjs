@@ -14,14 +14,15 @@ export async function POST(request: NextRequest) {
   try {
     // Parse and validate request body
     const body = await request.json()
-    const { intentSummary, cards } = GenerateReadingRequestSchema.parse(body)
+    const { intentSummary, cards, hiddenConcern } = GenerateReadingRequestSchema.parse(body)
 
-    console.log('[generate-reading] Request:', { intentSummary, cardsCount: cards.length })
+    console.log('[generate-reading] Request:', { intentSummary, cardsCount: cards.length, hiddenConcern })
 
     // Prepare input message
     const inputMessage = JSON.stringify({
       intentSummary,
       cards,
+      hiddenConcern,
     })
 
     // Call OpenAI Responses API

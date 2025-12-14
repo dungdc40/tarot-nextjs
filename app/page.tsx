@@ -247,7 +247,7 @@ export default function Home() {
             Powered by AI • Rider-Waite Tarot Deck
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Tarot Reading. All rights reserved.
+            © 2025 Tarot Reading. All rights reserved.
           </p>
         </div>
       </footer>

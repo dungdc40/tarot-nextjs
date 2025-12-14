@@ -22,9 +22,9 @@
 
 ## 3. Environment Variable Configuration
 
-- [ ] 3.1 Create `.env.production.example` file documenting required production variables
+- [x] 3.1 Create `.env.production.example` file documenting required production variables
 - [ ] 3.2 Add Neon connection pooling URL to Vercel environment variables as `DATABASE_URL` (Production)
-- [ ] 3.3 Add Neon direct URL to Vercel environment variables as `DIRECT_DATABASE_URL` (Production)
+- [ ] 3.3 Add Neon direct URL to Vercel environment variables as `DIRECT_URL` (Production)
 - [ ] 3.4 Add production Clerk publishable key to Vercel as `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (Production)
 - [ ] 3.5 Add production Clerk secret key to Vercel as `CLERK_SECRET_KEY` (Production)
 - [ ] 3.6 Add OpenAI API key to Vercel environment variables (Production)

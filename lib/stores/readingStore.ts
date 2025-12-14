@@ -39,7 +39,7 @@ interface ReadingStore {
   setState: (state: ReadingFlowState) => void
   startReading: () => void
   addMessage: (message: ChatMessage) => void
-  setIntention: (intention: string, topic?: string) => void
+  setIntention: (intention: string, topic?: string, hiddenConcern?: string) => void
   setSpread: (spread: SpreadSelection) => void
   setShuffledDeck: (deck: string[]) => void
   selectCard: (cardId: string, positionIndex: number) => void
@@ -101,7 +101,7 @@ export const useReadingStore = create<ReadingStore>((set, get) => ({
   },
 
   // Set the user's intention
-  setIntention: (intention, topic) => {
+  setIntention: (intention, topic, hiddenConcern) => {
     const { session } = get()
     if (!session) return
 
@@ -110,6 +110,7 @@ export const useReadingStore = create<ReadingStore>((set, get) => ({
         ...session,
         intention,
         topic,
+        hiddenConcern,
       },
     })
   },
