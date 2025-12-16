@@ -71,11 +71,14 @@ export function CardMessage({ card, index, responseId, onWhyRequest }: CardMessa
               <p className="text-sm font-medium text-primary">{card.label}</p>
             </div>
 
-            {/* Position Insight - Only thing shown */}
-            {card.promptRole && (
+            {/* Card Interpretation - Truncated */}
+            {card.interpretation && (
               <div>
-                <h5 className="mb-1 text-xs font-bold text-foreground/80">Position Insight</h5>
-                <p className="text-sm leading-relaxed text-foreground/70">{card.promptRole}</p>
+                <p className="text-sm leading-relaxed text-foreground/70">
+                  {card.interpretation.length > 100
+                    ? `${card.interpretation.slice(0, 100)}...`
+                    : card.interpretation}
+                </p>
               </div>
             )}
 

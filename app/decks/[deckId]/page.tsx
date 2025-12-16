@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react'
 import { riderWaiteDeckService } from '@/lib/services/RiderWaiteDeckService'
 import { getCardImagePath } from '@/lib/utils/cardImageUtils'
 import { filterCardsByCategory, CARD_CATEGORIES, type CardCategory } from '@/types/deck'
+import { CardDetailPopup } from '@/components/decks/CardDetailPopup'
 
 export default function DeckDetailPage() {
   const params = useParams()
@@ -18,6 +19,7 @@ export default function DeckDetailPage() {
   const [allCardIds, setAllCardIds] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState<CardCategory>('all')
   const [selectedCardIndex, setSelectedCardIndex] = useState(0)
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
 
   // Load deck data
   useEffect(() => {
@@ -165,12 +167,12 @@ export default function DeckDetailPage() {
             <p className="mb-6 text-foreground/80">{selectedCard.description}</p>
 
             {/* View Details Button */}
-            <Link
-              href={`/decks/${deckId}/cards/${selectedCardId}`}
+            <button
+              onClick={() => setIsPopupOpen(true)}
               className="inline-flex items-center rounded-lg bg-primary px-6 py-3 font-semibold text-white transition-colors hover:bg-primary-dark"
             >
               View Full Details →
-            </Link>
+            </button>
           </div>
         </div>
       )}
@@ -180,6 +182,14 @@ export default function DeckDetailPage() {
         Card {selectedCardIndex + 1} of {filteredCardIds.length}
       </div>
       </div>
+
+      {/* Card Detail Popup */}
+      <CardDetailPopup
+        card={selectedCard}
+        cardId={selectedCardId}
+        isOpen={isPopupOpen}
+        onClose={() => setIsPopupOpen(false)}
+      />
     </div>
   )
 }
