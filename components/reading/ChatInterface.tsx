@@ -15,7 +15,7 @@ interface ChatInterfaceProps {
   isLoading?: boolean
   placeholder?: string
   showAllMessageTypes?: boolean
-  onWhyRequest?: (expandedText: string) => Promise<void>
+  onWhyRequest?: (expandedText: string, responseId: string) => Promise<void>
 }
 
 export function ChatInterface({
@@ -30,14 +30,15 @@ export function ChatInterface({
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // Scroll to bottom function
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+    }
+  }
+
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    const scrollToBottom = () => {
-      if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
-      }
-    }
-
     // Use requestAnimationFrame to ensure DOM has been updated
     requestAnimationFrame(scrollToBottom)
   }, [messages, isLoading])
@@ -49,6 +50,17 @@ export function ChatInterface({
       setInput('')
     }
   }
+
+  // Create wrapper for onWhyRequest that also scrolls to bottom
+  const handleWhyRequestWithScroll = onWhyRequest
+    ? async (expandedText: string, responseId: string) => {
+        await onWhyRequest(expandedText, responseId)
+        // Small delay to ensure new message is rendered
+        setTimeout(() => {
+          requestAnimationFrame(scrollToBottom)
+        }, 100)
+      }
+    : undefined
 
   return (
     <div className="flex h-full flex-col relative" role="region" aria-label="Chat interface">
@@ -79,6 +91,7 @@ export function ChatInterface({
                   reading={message.data}
                   responseId={message.responseId}
                   onWhyRequest={onWhyRequest}
+                  onWhyRequestWithClose={handleWhyRequestWithScroll}
                 />
               </div>
             )
@@ -101,6 +114,7 @@ export function ChatInterface({
                   index={0}
                   responseId={message.responseId}
                   onWhyRequest={onWhyRequest}
+                  onWhyRequestWithClose={handleWhyRequestWithScroll}
                 />
               </div>
             )

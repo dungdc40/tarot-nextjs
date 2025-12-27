@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PROMPTS } from '@/lib/config/openai'
 import { RequestExplanationRequestSchema } from '@/lib/schemas/aiSchemas'
-import { callOpenAIResponsesAPI } from '@/lib/utils/openai-responses'
+import { llmProvider } from '@/lib/config/llm-provider'
+import { EXPLANATION_PROMPT, type ExplanationResult } from '@/lib/prompts/explanation-prompt'
 import { ZodError } from 'zod'
 
 /**
@@ -9,6 +10,7 @@ import { ZodError } from 'zod'
  *
  * Requests an explanation for highlighted text from a previous reading.
  * Uses the previous response ID for context continuity.
+ * Uses LLM provider abstraction (supports OpenAI and Xai).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -23,17 +25,21 @@ export async function POST(request: NextRequest) {
       highlightedText,
     })
 
-    // Call OpenAI Responses API with previous response ID for context
-    const { content, responseId: newResponseId } = await callOpenAIResponsesAPI({
+    // Call LLM provider with both prompt formats (provider picks what it needs)
+    const response = await llmProvider.callAPI({
       input: inputMessage,
-      promptId: PROMPTS.EXPLANATION,
+      promptId: PROMPTS.EXPLANATION, // For OpenAI (stored prompt)
+      promptDefinition: EXPLANATION_PROMPT, // For Xai (in-code prompt)
       previousResponseId: responseId,
     })
 
-    // Return response with metadata
+    // Parse JSON response to get explanation
+    const explanationData = response.content as ExplanationResult
+
+    // Return response with metadata (content is explanation string from JSON)
     const result = {
-      content,
-      responseId: newResponseId,
+      content: explanationData.explanation,
+      responseId: response.responseId,
     }
 
     console.log('[request-explanation] Response generated successfully')

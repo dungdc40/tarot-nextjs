@@ -11,6 +11,10 @@ interface CardPickerProps {
   positionIndex: number
   totalPositions: number
   onCardSelected: (cardId: string) => void
+  // Optional props for voice mode
+  showVoiceIndicator?: boolean   // Show "Voice session active" badge
+  onCancel?: () => void          // Cancel/close callback
+  promptRole?: string            // Additional context (e.g., "The card representing your past")
 }
 
 export function CardPicker({
@@ -19,6 +23,9 @@ export function CardPicker({
   positionIndex,
   totalPositions,
   onCardSelected,
+  showVoiceIndicator,
+  onCancel,
+  promptRole,
 }: CardPickerProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -182,16 +189,45 @@ export function CardPicker({
 
   return (
     <div
-      className="flex min-h-screen flex-col items-center bg-background p-4 overflow-y-auto"
+      className="flex min-h-screen flex-col items-center bg-background p-4 overflow-y-auto relative"
       role="region"
       aria-label="Card selection interface"
     >
+      {/* Voice session indicator */}
+      {showVoiceIndicator && (
+        <div className="absolute top-4 right-4 z-10">
+          <div className="neu-badge flex items-center space-x-2 px-3 py-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            <span className="text-xs font-medium">Voice active</span>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel button */}
+      {onCancel && (
+        <button
+          onClick={onCancel}
+          className="absolute top-4 left-4 z-10 neu-btn rounded-full p-2 hover:scale-105 transition-transform"
+          aria-label="Cancel card selection"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
       <div className="w-full max-w-6xl py-4">
         {/* Header */}
         <div className="mb-4 lg:mb-8 text-center">
           <h2 className="mb-2 font-serif text-2xl font-bold text-foreground md:text-3xl">
             Choose Your Card
           </h2>
+          {/* Prompt role (voice mode context) */}
+          {promptRole && (
+            <p className="mb-2 text-base text-muted-foreground/80 md:text-lg font-light italic">
+              {promptRole}
+            </p>
+          )}
           <p className="mb-1 text-base text-muted-foreground md:text-lg">
             Position {positionIndex + 1} of {totalPositions}
           </p>
@@ -371,26 +407,28 @@ export function CardPicker({
         </div>
 
         {/* Progress Indicator - Neumorphic */}
-        <div className="lg:mt-8" role="progressbar" aria-valuenow={positionIndex + 1} aria-valuemin={1} aria-valuemax={totalPositions} aria-label="Card selection progress">
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalPositions }, (_, i) => (
-              <div
-                key={i}
-                className={`h-2 w-8 lg:h-2.5 lg:w-10 rounded-full transition-all duration-200 ${
-                  i < positionIndex
-                    ? 'bg-primary shadow-neu-raised-sm'
-                    : i === positionIndex
-                    ? 'bg-primary/70 shadow-neu-raised-sm scale-110'
-                    : 'bg-surface-sunken shadow-neu-inset-sm'
-                }`}
-                aria-hidden="true"
-              />
-            ))}
+        {totalPositions > 1 && (
+          <div className="lg:mt-8" role="progressbar" aria-valuenow={positionIndex + 1} aria-valuemin={1} aria-valuemax={totalPositions} aria-label="Card selection progress">
+            <div className="flex justify-center gap-2">
+              {Array.from({ length: totalPositions }, (_, i) => (
+                <div
+                  key={i}
+                  className={`h-2 w-8 lg:h-2.5 lg:w-10 rounded-full transition-all duration-200 ${
+                    i < positionIndex
+                      ? 'bg-primary shadow-neu-raised-sm'
+                      : i === positionIndex
+                      ? 'bg-primary/70 shadow-neu-raised-sm scale-110'
+                      : 'bg-surface-sunken shadow-neu-inset-sm'
+                  }`}
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
+            <p className="sr-only">
+              Selecting card {positionIndex + 1} of {totalPositions}
+            </p>
           </div>
-          <p className="sr-only">
-            Selecting card {positionIndex + 1} of {totalPositions}
-          </p>
-        </div>
+        )}
       </div>
 
       {/* Hide scrollbar and style slider CSS */}

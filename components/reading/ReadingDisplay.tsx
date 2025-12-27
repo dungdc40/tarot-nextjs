@@ -7,10 +7,11 @@ import type { ReadingMainData } from '@/types'
 interface ReadingDisplayProps {
   reading: ReadingMainData
   responseId?: string
-  onWhyRequest?: (expandedText: string) => Promise<void>
+  onWhyRequest?: (expandedText: string, responseId: string) => Promise<void>
+  onWhyRequestWithClose?: (expandedText: string, responseId: string) => Promise<void>
 }
 
-export function ReadingDisplay({ reading, responseId, onWhyRequest }: ReadingDisplayProps) {
+export function ReadingDisplay({ reading, responseId, onWhyRequest, onWhyRequestWithClose }: ReadingDisplayProps) {
   return (
     <div className="mx-auto max-w-4xl space-y-4 p-4">
       {/* Individual Card Interpretations - Show First */}
@@ -22,6 +23,7 @@ export function ReadingDisplay({ reading, responseId, onWhyRequest }: ReadingDis
             index={index}
             responseId={responseId}
             onWhyRequest={onWhyRequest}
+            onWhyRequestWithClose={onWhyRequestWithClose}
           />
         ))}
       </div>

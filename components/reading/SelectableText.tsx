@@ -9,7 +9,7 @@ interface SelectableTextProps {
   text: string
   responseId?: string
   className?: string
-  onWhyRequest?: (expandedText: string) => Promise<void>
+  onWhyRequest?: (expandedText: string, responseId: string) => Promise<void>
 }
 
 interface ButtonPosition {
@@ -115,7 +115,7 @@ export function SelectableText({
     window.getSelection()?.removeAllRanges()
 
     try {
-      await onWhyRequest(textToExplain)
+      await onWhyRequest(textToExplain, responseId!)
     } catch (err) {
       console.error('Failed to get explanation:', err)
       // Don't show error toast since button is already hidden

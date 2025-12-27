@@ -40,8 +40,8 @@ export interface CardDraw {
   drawIndex: number
   label: string          // Position label (e.g., "Past influences")
   promptRole: string     // Position description for AI
-  interpretation: string // AI interpretation for this card
-  generalMeaning: string // General card meaning
+  interpretation?: string // AI interpretation for this card (optional - added during reading)
+  generalMeaning?: string // General card meaning (optional - added during reading)
 }
 
 // ===========================

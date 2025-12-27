@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PROMPTS } from '@/lib/config/openai'
 import { GenerateReadingRequestSchema } from '@/lib/schemas/aiSchemas'
-import { callOpenAIResponsesAPI } from '@/lib/utils/openai-responses'
+import { llmProvider } from '@/lib/config/llm-provider'
+import { READING_PROMPT } from '@/lib/prompts/reading-prompt'
 import { ZodError } from 'zod'
 
 /**
@@ -9,6 +10,7 @@ import { ZodError } from 'zod'
  *
  * Generates a complete tarot reading interpretation based on
  * the user's intention and selected cards.
+ * Uses LLM provider abstraction (supports OpenAI and Xai).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -25,19 +27,28 @@ export async function POST(request: NextRequest) {
       hiddenConcern,
     })
 
-    // Call OpenAI Responses API
-    const { content, responseId } = await callOpenAIResponsesAPI({
+    // Call LLM provider with both prompt formats (provider picks what it needs)
+    const response = await llmProvider.callAPI({
       input: inputMessage,
-      promptId: PROMPTS.READING,
+      promptId: PROMPTS.READING, // For OpenAI (stored prompt)
+      promptDefinition: READING_PROMPT, // For Xai (in-code prompt)
     })
 
-    // Parse JSON response (same pattern as other endpoints)
-    const parsed = JSON.parse(content)
+    // Response is already validated and parsed by provider
+    const readingData = response.content as {
+      cards: Array<{
+        cardId: string
+        name: string
+        interpretation: string
+        label: string
+      }>
+      synthesis: string
+    }
 
-    // Return response with messageData
+    // Wrap in the expected messageData format for the API response
     const result = {
-      messageData: parsed,
-      responseId,
+      messageData: readingData,
+      responseId: response.responseId,
     }
 
     console.log('[generate-reading] Response generated successfully')

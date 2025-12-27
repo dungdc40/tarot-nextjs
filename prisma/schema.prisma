@@ -25,3 +25,12 @@ model JournalEntry {
   @@index([createdAt(sort: Desc)])
   @@map("journal_entries")
 }
+
+model User {
+  id        String   @id // Clerk user ID
+  tipsShown Json?    // Tracks which tips have been shown: { "followupChatTip": boolean }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}

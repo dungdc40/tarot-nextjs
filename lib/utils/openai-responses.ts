@@ -1,26 +1,24 @@
-import { OPENAI_BASE_URL, OPENAI_API_KEY, OPENAI_CONFIG } from '@/lib/config/openai'
+import { openai, OPENAI_CONFIG } from '@/lib/config/openai'
+import OpenAI from 'openai'
 
 /**
- * Parses the OpenAI Responses API payload and extracts all assistant output_text values.
- * Matches Flutter's extractAssistantOutputText function.
+ * Extracts assistant output text from OpenAI Responses API response.
+ * Uses SDK's typed response structure to safely access content.
  */
-export function extractAssistantOutputText(response: any): string {
-  if (!response || typeof response !== 'object') return ''
-
-  const output = response.output
-  if (!Array.isArray(output)) return ''
+function extractAssistantOutputText(response: OpenAI.Responses.Response): string {
+  if (!response.output || !Array.isArray(response.output)) {
+    return ''
+  }
 
   const results: string[] = []
 
-  for (const item of output) {
-    if (typeof item !== 'object' || !item) continue
+  for (const item of response.output) {
     if (item.type !== 'message' || item.role !== 'assistant') continue
 
     const content = item.content
     if (!Array.isArray(content)) continue
 
     for (const block of content) {
-      if (typeof block !== 'object' || !block) continue
       if (block.type !== 'output_text') continue
 
       const text = block.text
@@ -34,8 +32,16 @@ export function extractAssistantOutputText(response: any): string {
 }
 
 /**
- * Calls OpenAI Responses API with the given parameters.
- * Matches Flutter's createResponseWithFormat function.
+ * Calls OpenAI Responses API using the official OpenAI SDK.
+ *
+ * Uses stored prompts from OpenAI platform and supports conversation continuity
+ * via previousResponseId parameter.
+ *
+ * @param input - User input text
+ * @param promptId - OpenAI stored prompt ID
+ * @param previousResponseId - Optional response ID from previous turn for context
+ * @returns Object containing extracted content and response ID
+ * @throws Error if API call fails or response is empty
  */
 export async function callOpenAIResponsesAPI({
   input,
@@ -46,56 +52,53 @@ export async function callOpenAIResponsesAPI({
   promptId: string
   previousResponseId?: string
 }): Promise<{ content: string; responseId: string }> {
-  // Prepare request data for Responses API (matching Flutter implementation)
-  const requestData: any = {
-    model: OPENAI_CONFIG.model,
-    input,
-    prompt: {
-      id: promptId,
-    },
-  }
+  try {
+    // Prepare request parameters for Responses API
+    const requestParams: OpenAI.Responses.ResponseCreateParams = {
+      model: OPENAI_CONFIG.model,
+      input,
+      prompt: {
+        id: promptId,
+      },
+    }
 
-  // Add previous response ID for context if available
-  if (previousResponseId) {
-    requestData.previous_response_id = previousResponseId
-  }
+    // Add previous response ID for conversation continuity if provided
+    if (previousResponseId) {
+      requestParams.previous_response_id = previousResponseId
+    }
 
-  console.log('[OpenAI Responses API] Request:', requestData)
+    console.log('[OpenAI Responses API] Request:', requestParams)
 
-  // Call OpenAI Responses API
-  const response = await fetch(`${OPENAI_BASE_URL}/responses`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestData),
-  })
+    // Call OpenAI Responses API using SDK
+    const response = await openai.responses.create(requestParams)
 
-  if (!response.ok) {
-    const errorData = await response.json()
-    console.error('[OpenAI Responses API] Error:', errorData)
-    throw new Error(errorData.error?.message || 'OpenAI API request failed')
-  }
+    console.log('[OpenAI Responses API] Response:', response)
 
-  const responseData = await response.json()
+    // Extract assistant output text from SDK response
+    const content = extractAssistantOutputText(response)
 
-  console.log('[OpenAI Responses API] Response:', responseData)
+    if (!content) {
+      throw new Error('No content in OpenAI response')
+    }
 
-  // Check for refusal (safety-related model refusals)
-  if (responseData.refusal) {
-    throw new Error(`Model refused to respond: ${responseData.refusal}`)
-  }
+    return {
+      content,
+      responseId: response.id || '',
+    }
+  } catch (error) {
+    // Handle OpenAI SDK errors
+    if (error instanceof OpenAI.APIError) {
+      console.error('[OpenAI Responses API] APIError:', {
+        status: error.status,
+        message: error.message,
+        type: error.type,
+        code: error.code,
+      })
+      throw new Error(error.message || 'OpenAI API request failed')
+    }
 
-  // Extract assistant output text from response
-  const content = extractAssistantOutputText(responseData)
-
-  if (!content) {
-    throw new Error('No content in OpenAI response')
-  }
-
-  return {
-    content,
-    responseId: responseData.id || '',
+    // Re-throw other errors
+    console.error('[OpenAI Responses API] Error:', error)
+    throw error
   }
 }

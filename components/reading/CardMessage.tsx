@@ -12,12 +12,21 @@ interface CardMessageProps {
   card: CardDraw
   index: number
   responseId?: string
-  onWhyRequest?: (expandedText: string) => Promise<void>
+  onWhyRequest?: (expandedText: string, responseId: string) => Promise<void>
+  onWhyRequestWithClose?: (expandedText: string, responseId: string) => Promise<void>
 }
 
-export function CardMessage({ card, index, responseId, onWhyRequest }: CardMessageProps) {
+export function CardMessage({ card, index, responseId, onWhyRequest, onWhyRequestWithClose }: CardMessageProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [cardData, setCardData] = useState<TarotCardData | null>(null)
+
+  // Create a wrapper that closes dialog before calling onWhyRequest
+  const handleWhyRequestWithClose = onWhyRequestWithClose
+    ? async (expandedText: string, responseId: string) => {
+        setIsDialogOpen(false)
+        await onWhyRequestWithClose(expandedText, responseId)
+      }
+    : undefined
 
   useEffect(() => {
     const loadCardData = async () => {
@@ -100,6 +109,7 @@ export function CardMessage({ card, index, responseId, onWhyRequest }: CardMessa
         onClose={() => setIsDialogOpen(false)}
         responseId={responseId}
         onWhyRequest={onWhyRequest}
+        onWhyRequestWithClose={handleWhyRequestWithClose}
       />
     </>
   )

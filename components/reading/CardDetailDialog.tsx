@@ -14,10 +14,11 @@ interface CardDetailDialogProps {
   isOpen: boolean
   onClose: () => void
   responseId?: string
-  onWhyRequest?: (expandedText: string) => Promise<void>
+  onWhyRequest?: (expandedText: string, responseId: string) => Promise<void>
+  onWhyRequestWithClose?: (expandedText: string, responseId: string) => Promise<void>
 }
 
-export function CardDetailDialog({ card, isOpen, onClose, responseId, onWhyRequest }: CardDetailDialogProps) {
+export function CardDetailDialog({ card, isOpen, onClose, responseId, onWhyRequest, onWhyRequestWithClose }: CardDetailDialogProps) {
   const [cardData, setCardData] = useState<TarotCardData | null>(null)
 
   useEffect(() => {
@@ -123,7 +124,7 @@ export function CardDetailDialog({ card, isOpen, onClose, responseId, onWhyReque
                         text={card.interpretation}
                         responseId={responseId}
                         className="text-sm lg:text-base text-foreground/80"
-                        onWhyRequest={onWhyRequest}
+                        onWhyRequest={onWhyRequestWithClose || onWhyRequest}
                       />
                     </div>
                   )}

@@ -1,7 +1,19 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
-import { Layers, ChevronRight, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
+import { ChevronRight, ArrowLeft } from 'lucide-react'
+import { DeckDetailPopup } from '@/components/decks/DeckDetailPopup'
 
 export default function DecksPage() {
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [selectedDeck, setSelectedDeck] = useState<{
+    id: string
+    name: string
+    description: string
+    cardCount: number
+  } | null>(null)
   // For now, we only have the Rider-Waite deck
   // In the future, this could fetch from a database or API
   const decks = [
@@ -9,10 +21,15 @@ export default function DecksPage() {
       id: 'rider-waite',
       name: 'Rider-Waite Tarot',
       description:
-        'The most popular tarot deck in the world. Created by Arthur Edward Waite and illustrated by Pamela Colman Smith in 1909.',
+        'The Rider-Waite Tarot (also known as Rider-Waite-Smith) was first published in 1909. It was created by Arthur Edward Waite, who designed the symbolic system, and illustrated by Pamela Colman Smith, whose artwork brought the cards to life.',
       cardCount: 78,
     },
   ]
+
+  const handleDeckClick = (deck: typeof decks[0]) => {
+    setSelectedDeck(deck)
+    setIsPopupOpen(true)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,30 +61,38 @@ export default function DecksPage() {
           <h2 id="decks-heading" className="sr-only">Available Tarot Decks</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {decks.map((deck) => (
-              <Link
+              <button
                 key={deck.id}
-                href={`/decks/${deck.id}`}
-                className="neu-card-interactive group cursor-pointer"
+                onClick={() => handleDeckClick(deck)}
+                className="neu-card-interactive group cursor-pointer text-left"
                 aria-label={`View ${deck.name} - ${deck.cardCount} cards`}
               >
-                {/* Deck Icon - Neumorphic inset */}
-                <div
-                  className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-neu bg-surface-sunken shadow-neu-inset-sm"
-                  aria-hidden="true"
-                >
-                  <Layers className="h-8 w-8 text-primary" />
-                </div>
-
-                {/* Deck Info */}
-                <h3 className="mb-2 font-serif text-2xl font-semibold text-foreground transition-colors duration-200 group-hover:text-primary">
+                {/* Deck Title - Full Width */}
+                <h3 className="mb-3 font-serif text-2xl font-semibold text-foreground transition-colors duration-200 group-hover:text-primary">
                   {deck.name}
                 </h3>
+
+                {/* The Fool Card Image - Float Left from Description */}
+                <div
+                  className="float-left mr-4 mb-2 h-28 w-[70px] overflow-hidden rounded-lg shadow-neu-inset-sm"
+                  aria-hidden="true"
+                >
+                  <Image
+                    src="/images/cards/major_arcana/RW-00-FOOL.png"
+                    alt="The Fool Card"
+                    width={70}
+                    height={112}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+
+                {/* Deck Description */}
                 <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
                   {deck.description}
                 </p>
 
                 {/* Card Count Badge - Neumorphic */}
-                <div className="flex items-center justify-between">
+                <div className="clear-left flex items-center justify-between">
                   <span className="neu-badge text-primary">
                     {deck.cardCount} Cards
                   </span>
@@ -78,11 +103,23 @@ export default function DecksPage() {
                     aria-hidden="true"
                   />
                 </div>
-              </Link>
+              </button>
             ))}
           </div>
         </section>
       </div>
+
+      {/* Deck Detail Popup */}
+      {selectedDeck && (
+        <DeckDetailPopup
+          isOpen={isPopupOpen}
+          onClose={() => setIsPopupOpen(false)}
+          deckId={selectedDeck.id}
+          deckName={selectedDeck.name}
+          deckDescription={selectedDeck.description}
+          cardCount={selectedDeck.cardCount}
+        />
+      )}
     </div>
   )
 }

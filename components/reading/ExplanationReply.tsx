@@ -9,7 +9,7 @@ interface ExplanationReplyProps {
   originalText: string
   explanation: string
   responseId?: string
-  onWhyRequest?: (expandedText: string) => Promise<void>
+  onWhyRequest?: (expandedText: string, responseId: string) => Promise<void>
 }
 
 export function ExplanationReply({

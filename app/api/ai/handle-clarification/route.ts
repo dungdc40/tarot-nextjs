@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PROMPTS } from '@/lib/config/openai'
 import { HandleClarificationRequestSchema } from '@/lib/schemas/aiSchemas'
-import { callOpenAIResponsesAPI } from '@/lib/utils/openai-responses'
+import { llmProvider } from '@/lib/config/llm-provider'
+import { CLARIFICATION_PROMPT } from '@/lib/prompts/clarification-prompt'
 import { ZodError } from 'zod'
+import type { ClarificationResult } from '@/types'
 
 /**
  * POST /api/ai/handle-clarification
  *
  * Handles clarification questions during a reading follow-up.
  * May return additional card draws or a final answer.
+ * Uses LLM provider abstraction (supports OpenAI and Xai).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -29,48 +32,41 @@ export async function POST(request: NextRequest) {
       cards,
     })
 
-    // Call OpenAI Responses API with previous response ID for context
-    const { content, responseId } = await callOpenAIResponsesAPI({
+    // Call LLM provider with both prompt formats (provider picks what it needs)
+    const response = await llmProvider.callAPI({
       input: inputMessage,
-      promptId: PROMPTS.CLARIFICATION,
+      promptId: PROMPTS.CLARIFICATION, // For OpenAI (stored prompt)
+      promptDefinition: CLARIFICATION_PROMPT, // For Xai (in-code prompt)
       previousResponseId,
     })
 
-    // Parse JSON response
-    try {
-      const decoded = JSON.parse(content)
-
-      const message = (decoded.synthesis as string) || ''
-      const isFinalAnswer = (decoded.isFinalAnswer as boolean) ?? false
-      const responseCards = Array.isArray(decoded.cards) ? decoded.cards : []
-
-      const result = {
-        message: message.trim() || content,
-        cards: responseCards,
-        isFinalAnswer,
-        responseId,
-      }
-
-      console.log('[handle-clarification] Response:', {
-        cardsNeeded: result.cards.length,
-        isFinalAnswer: result.isFinalAnswer,
-      })
-
-      return NextResponse.json(result, { status: 200 })
-    } catch (parseError) {
-      // Fallback if JSON parsing fails
-      console.error('[handle-clarification] Failed to parse response:', parseError)
-
-      return NextResponse.json(
-        {
-          message: content,
-          cards: [],
-          isFinalAnswer: true,
-          responseId,
-        },
-        { status: 200 }
-      )
+    // Response is already validated by provider
+    const clarificationData = response.content as {
+      synthesis: string
+      isFinalAnswer: boolean
+      cards: Array<{
+        cardId: string
+        name: string
+        promptRole: string
+        interpretation: string
+        label: string
+        reversed: boolean
+      }>
     }
+
+    const result: ClarificationResult = {
+      message: clarificationData.synthesis,
+      cards: clarificationData.cards as any, // Type conversion for CardDraw compatibility
+      isFinalAnswer: clarificationData.isFinalAnswer,
+      responseId: response.responseId,
+    }
+
+    console.log('[handle-clarification] Response:', {
+      cardsNeeded: result.cards.length,
+      isFinalAnswer: result.isFinalAnswer,
+    })
+
+    return NextResponse.json(result, { status: 200 })
   } catch (error) {
     console.error('[handle-clarification] Error:', error)
 

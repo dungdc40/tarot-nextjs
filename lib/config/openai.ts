@@ -3,11 +3,11 @@ import OpenAI from 'openai'
 // Validate that required environment variables are set
 const requiredEnvVars = [
   'OPENAI_API_KEY',
-  'PROMPT_INTENT_ID',
-  'PROMPT_SPREAD_ID',
-  'PROMPT_READING_ID',
-  'PROMPT_EXPLANATION_ID',
-  'PROMPT_CLARIFICATION_ID',
+  'OPENAI_PROMPT_INTENT_ID',
+  'OPENAI_PROMPT_SPREAD_ID',
+  'OPENAI_PROMPT_READING_ID',
+  'OPENAI_PROMPT_EXPLANATION_ID',
+  'OPENAI_PROMPT_CLARIFICATION_ID',
 ] as const
 
 for (const envVar of requiredEnvVars) {
@@ -20,7 +20,7 @@ for (const envVar of requiredEnvVars) {
 export const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1'
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY!
 
-// Create OpenAI client instance (for fallback if needed)
+// Create OpenAI client instance for all API interactions
 export const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
   baseURL: OPENAI_BASE_URL,
@@ -28,11 +28,11 @@ export const openai = new OpenAI({
 
 // Export prompt IDs for easy access (these are stored prompt IDs in OpenAI)
 export const PROMPTS = {
-  INTENT: process.env.PROMPT_INTENT_ID!,
-  SPREAD: process.env.PROMPT_SPREAD_ID!,
-  READING: process.env.PROMPT_READING_ID!,
-  EXPLANATION: process.env.PROMPT_EXPLANATION_ID!,
-  CLARIFICATION: process.env.PROMPT_CLARIFICATION_ID!,
+  INTENT: process.env.OPENAI_PROMPT_INTENT_ID!,
+  SPREAD: process.env.OPENAI_PROMPT_SPREAD_ID!,
+  READING: process.env.OPENAI_PROMPT_READING_ID!,
+  EXPLANATION: process.env.OPENAI_PROMPT_EXPLANATION_ID!,
+  CLARIFICATION: process.env.OPENAI_PROMPT_CLARIFICATION_ID!,
 } as const
 
 // OpenAI model configuration (matching Flutter app exactly)

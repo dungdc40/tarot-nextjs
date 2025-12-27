@@ -8,7 +8,7 @@ interface SynthesisMessageProps {
   interpretation: string
   advice: string
   responseId?: string
-  onWhyRequest?: (expandedText: string) => Promise<void>
+  onWhyRequest?: (expandedText: string, responseId: string) => Promise<void>
 }
 
 export function SynthesisMessage({

@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PROMPTS } from '@/lib/config/openai'
 import { AssessIntentRequestSchema } from '@/lib/schemas/aiSchemas'
-import { callOpenAIResponsesAPI } from '@/lib/utils/openai-responses'
+import { llmProvider } from '@/lib/config/llm-provider'
+import { INTENT_PROMPT } from '@/lib/prompts/intent-prompt'
 import { ZodError } from 'zod'
 
 /**
  * POST /api/ai/assess-intent
  *
  * Assesses the clarity of a user's intention for a tarot reading.
- * Uses OpenAI Responses API with stored prompt.
+ * Uses LLM provider abstraction (supports OpenAI and Xai).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -18,20 +19,18 @@ export async function POST(request: NextRequest) {
 
     console.log('[assess-intent] Request:', { userMessage, previousResponseId })
 
-    // Call OpenAI Responses API
-    const { content, responseId } = await callOpenAIResponsesAPI({
+    // Call LLM provider with both prompt formats (provider picks what it needs)
+    const response = await llmProvider.callAPI({
       input: userMessage,
-      promptId: PROMPTS.INTENT,
+      promptId: PROMPTS.INTENT, // For OpenAI (stored prompt)
+      promptDefinition: INTENT_PROMPT, // For Xai (in-code prompt)
       previousResponseId,
     })
 
-    // Parse JSON response
-    const parsed = JSON.parse(content)
-
     // Add response ID for context tracking
     const result = {
-      ...parsed,
-      responseId,
+      ...(response.content as Record<string, unknown>),
+      responseId: response.responseId,
     }
 
     console.log('[assess-intent] Final result:', result)

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PROMPTS } from '@/lib/config/openai'
 import { GenerateSpreadRequestSchema } from '@/lib/schemas/aiSchemas'
-import { callOpenAIResponsesAPI } from '@/lib/utils/openai-responses'
+import { llmProvider } from '@/lib/config/llm-provider'
+import { SPREAD_PROMPT } from '@/lib/prompts/spread-prompt'
 import { ZodError } from 'zod'
 
 /**
@@ -9,6 +10,7 @@ import { ZodError } from 'zod'
  *
  * Generates a tarot spread selection based on the user's intention.
  * Returns spread configuration with positions and their roles.
+ * Uses LLM provider abstraction (supports OpenAI and Xai).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -24,20 +26,30 @@ export async function POST(request: NextRequest) {
       ...(timeframe && { timeframe }),
     })
 
-    // Call OpenAI Responses API
-    const { content, responseId } = await callOpenAIResponsesAPI({
+    // Call LLM provider with both prompt formats (provider picks what it needs)
+    const response = await llmProvider.callAPI({
       input: inputMessage,
-      promptId: PROMPTS.SPREAD,
+      promptId: PROMPTS.SPREAD, // For OpenAI (stored prompt)
+      promptDefinition: SPREAD_PROMPT, // For Xai (in-code prompt)
     })
 
-    // Parse JSON response
-    const parsed = JSON.parse(content)
+    // Response is already validated and parsed by provider
+    const spreadData = response.content as {
+      spreadType: string
+      spreadDescription: string
+      reasoning: string
+      positions: Array<{
+        key: string
+        label: string
+        promptRole: string
+      }>
+    }
 
-    // Add response ID
+    // Wrap in the expected format for the API response
     const result = {
       success: true,
-      spread: parsed,
-      responseId,
+      spread: spreadData,
+      responseId: response.responseId,
       isComplete: true,
     }
 

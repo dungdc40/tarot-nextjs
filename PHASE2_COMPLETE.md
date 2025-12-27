@@ -133,11 +133,11 @@ OPENAI_API_KEY=sk-your-api-key-here
 OPENAI_BASE_URL=https://api.openai.com/v1
 
 # Prompt IDs (from OpenAI prompt library)
-PROMPT_INTENT_ID=your-intent-prompt-id
-PROMPT_SPREAD_ID=your-spread-prompt-id
-PROMPT_READING_ID=your-reading-prompt-id
-PROMPT_EXPLANATION_ID=your-explanation-prompt-id
-PROMPT_CLARIFICATION_ID=your-clarification-prompt-id
+OPENAI_PROMPT_INTENT_ID=your-intent-prompt-id
+OPENAI_PROMPT_SPREAD_ID=your-spread-prompt-id
+OPENAI_PROMPT_READING_ID=your-reading-prompt-id
+OPENAI_PROMPT_EXPLANATION_ID=your-explanation-prompt-id
+OPENAI_PROMPT_CLARIFICATION_ID=your-clarification-prompt-id
 
 # Database (choose one option below)
 

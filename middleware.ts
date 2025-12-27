@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   '/',           // Landing page
   '/decks(.*)',  // Card exploration - public for browsing
   '/quick-draw', // Quick card draw - public feature
+  '/reading(.*)', // Reading pages - public for testing
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/api/webhook(.*)', // Webhook endpoints (if added later)

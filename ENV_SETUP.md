@@ -25,20 +25,20 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 ### OpenAI Prompt IDs
 
 ```bash
-PROMPT_INTENT_ID=prompt-intent-dummy-id-12345
-PROMPT_SPREAD_ID=prompt-spread-dummy-id-67890
-PROMPT_READING_ID=prompt-reading-dummy-id-abcde
-PROMPT_EXPLANATION_ID=prompt-explanation-dummy-id-fghij
-PROMPT_CLARIFICATION_ID=prompt-clarification-dummy-id-klmno
+OPENAI_PROMPT_INTENT_ID=prompt-intent-dummy-id-12345
+OPENAI_PROMPT_SPREAD_ID=prompt-spread-dummy-id-67890
+OPENAI_PROMPT_READING_ID=prompt-reading-dummy-id-abcde
+OPENAI_PROMPT_EXPLANATION_ID=prompt-explanation-dummy-id-fghij
+OPENAI_PROMPT_CLARIFICATION_ID=prompt-clarification-dummy-id-klmno
 ```
 
 **What these are:**
 These are OpenAI Prompt IDs that contain the system prompts for each AI feature:
-- `PROMPT_INTENT_ID` - Assesses user's intention clarity
-- `PROMPT_SPREAD_ID` - Generates tarot spread configuration
-- `PROMPT_READING_ID` - Generates the full reading interpretation
-- `PROMPT_EXPLANATION_ID` - Explains highlighted text ("Why?" feature)
-- `PROMPT_CLARIFICATION_ID` - Handles follow-up questions
+- `OPENAI_PROMPT_INTENT_ID` - Assesses user's intention clarity
+- `OPENAI_PROMPT_SPREAD_ID` - Generates tarot spread configuration
+- `OPENAI_PROMPT_READING_ID` - Generates the full reading interpretation
+- `OPENAI_PROMPT_EXPLANATION_ID` - Explains highlighted text ("Why?" feature)
+- `OPENAI_PROMPT_CLARIFICATION_ID` - Handles follow-up questions
 
 **What you need to do:**
 1. You'll need to create these prompts in your OpenAI account
@@ -91,6 +91,39 @@ npx prisma studio
 - **Railway**: https://railway.app (Free tier available)
 - **Neon**: https://neon.tech (Serverless PostgreSQL, free tier)
 - **DigitalOcean**: Managed PostgreSQL (~$15/month)
+
+---
+
+### OpenAI Voice Reading Mode Configuration (Optional)
+
+```bash
+OPENAI_VOICE_ENABLED=false
+VOICE_TOKEN_TTL=60
+VOICE_MAX_SESSION_DURATION=1800
+```
+
+**What these are:**
+- `OPENAI_VOICE_ENABLED` - Enables/disables voice reading mode feature
+- `VOICE_TOKEN_TTL` - Time-to-live for ephemeral tokens in seconds (default: 60)
+- `VOICE_MAX_SESSION_DURATION` - Maximum session duration in seconds (default: 1800 = 30 minutes)
+
+**What you need to do:**
+1. Voice mode requires OpenAI Realtime API access
+2. Set `OPENAI_VOICE_ENABLED=true` to enable the feature
+3. Ensure `OPENAI_API_KEY` has access to Realtime API
+4. Voice mode will appear as an option on the reading page when enabled
+
+**Browser Requirements:**
+- Modern browser with WebRTC support (Chrome, Firefox, Safari, Edge)
+- HTTPS connection (or localhost for development)
+- Microphone permission granted
+
+**Cost Considerations:**
+- Voice mode uses OpenAI's Realtime API (`gpt-4o-realtime-preview`)
+- Charged per audio minute of connection time
+- Recommended to monitor usage and set appropriate `VOICE_MAX_SESSION_DURATION`
+
+**For now:** Voice mode is disabled by default. Text-based reading mode works independently.
 
 ---
 
@@ -164,7 +197,10 @@ curl -X POST http://localhost:3000/api/ai/assess-intent \
 |----------|--------|-----------------|
 | `OPENAI_API_KEY` | ⚠️ Dummy | Replace with real API key |
 | `OPENAI_BASE_URL` | ✅ Set | No action needed |
-| `PROMPT_*_ID` (5 vars) | ⚠️ Dummy | Create prompts in OpenAI |
+| `OPENAI_PROMPT_*_ID` (5 vars) | ⚠️ Dummy | Create prompts in OpenAI |
+| `OPENAI_VOICE_ENABLED` | ✅ Set (disabled) | Set to `true` to enable voice mode (optional) |
+| `VOICE_TOKEN_TTL` | ✅ Set | No action needed |
+| `VOICE_MAX_SESSION_DURATION` | ✅ Set | No action needed |
 | `DATABASE_URL` | ⚠️ Points to local | Set up PostgreSQL database |
 | `NEXT_PUBLIC_APP_URL` | ✅ Set | No action needed |
 | `NODE_ENV` | ✅ Set | No action needed |
